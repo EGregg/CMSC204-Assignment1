@@ -3,19 +3,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * 
+ * @author EGREGG
+ * Validates that a password entered by the user meets the required specifications. 
+ * 
+ * 
+ */
 public class PasswordCheckerUtility {
 	
-	private static boolean isValidPassword(String str1)
-		throws LengthException, hasRepeatingException, InvalidSequenceException, LengthException, NoLowerAlphaException, NoNumericException,
-	NoSpecialCharacterException, NoUpperAlphaException, UnmatchedException, WeakPasswordException{
-		return isValidLength(str1) && hasNumeric(str1) && hasSpecial(str1) && hasUpperAlpha(str1) && hasLower(str1) && isValidSequence(str1);
+	public static boolean isValidPassword(String str1)
+		throws LengthException, NoDigitException, NoUpperAlphaException,NoLowerAlphaException, InvalidSequenceException, NoSpecialCharacterException{
+		return isValidLength(str1) && hasNumeric(str1) && hasSpecial(str1) && hasUpperAlpha(str1) && hasLower(str1) && isValidSequence(str1) ;
 	}
 	
-	private static boolean isValidPassword(){
-		return true;
-	}
-	
-	private static boolean isValidLength(String str1){
+	public static boolean isValidLength(String str1){
 		if (str1.length() >= 6) {
 			return true;
 		}
@@ -41,7 +43,7 @@ public class PasswordCheckerUtility {
 		return true;
 	}
 	
-	private static boolean hasUpperAlpha(String str1) {
+	public static boolean hasUpperAlpha(String str1) {
 		for (Character c : str1.toCharArray()) {
 			if (Character.isUpperCase(c)) {
 				return true;
@@ -51,8 +53,8 @@ public class PasswordCheckerUtility {
 	}
 	
 	private static boolean hasLower(String str1) {
-		for (Character c : str1.toCharArray()) {
-			if (Character.isLowerCase(c)) {
+		for (int i=0; i < str1.length(); i++) {
+			if (Character.isLowerCase(str1.charAt(i))){
 				return true;
 			}
 		}
@@ -74,11 +76,14 @@ public class PasswordCheckerUtility {
 		return passWordList;
 	}
 
-	private static boolean isWeakPassword(String str1){
-		return isValidPassword(str1) && (str1.length() < 10);
+	public static boolean isWeakPassword(String str1){
+		if (isValidLength(str1) && str1.length() < 10) {
+			throw new WeakPasswordException();
+		}
+		return true;
 	}
 
-	private static ArrayList<String> getInvalidPasswords(ArrayList<String> passwords) {
+	public static ArrayList<String> getInvalidPasswords(ArrayList<String> passwords) {
 	    ArrayList<String> invalidPasswords = new ArrayList<>();
 	    for (String s : passwords) {
 	      try {
@@ -101,17 +106,28 @@ public class PasswordCheckerUtility {
 	      return true;
 	}
 	
-	private static boolean comparePasswords(String str1, String str2) {
+	public static boolean comparePasswords(String str1, String str2) {
 		if (str1 != str2){
 			throw new UnmatchedException();
 		}
 		return true;
 	}
 
-	private static boolean comparePasswordsWithReturn(String str1, String str2) {
-		if (str1 != str2) {
-			throw new UnmatchedException();
+	public static boolean comparePasswordsWithReturn(String str1, String str2) {
+		if (str1.equals(str2)) {
+			return true;
 		}
-		return true;
+		
+		throw new UnmatchedException();
 	}
+	
+	public static boolean hasDigit(String str1) {
+		for (Character c : str1.toCharArray()) {
+			if (Character.isDigit(str1.charAt(c))) {
+				return true;
+		}
+		}
+		throw new NoDigitException();
+	
 	}
+}
